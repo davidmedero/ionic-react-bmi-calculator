@@ -38,7 +38,7 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 
 const App: React.FC = () =>  {
-const [calculatedBmi, setCalculatedBmi] = useState<number>()
+const [calculatedBmi, setCalculatedBmi] = useState<number | string>()
 const [error, setError] = useState<string>()
 const [calcUnits, setCalcUnits] = useState<"mkg" | "ftlbs">("mkg")
 
@@ -68,6 +68,7 @@ const calculateBMI = () => {
 const resetInputs = () => {
   weightInputRef.current!.value = "";
   heightInputRef.current!.value = "";
+  setCalculatedBmi("");
 }
 
 const clearError = () =>
