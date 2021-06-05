@@ -44,23 +44,33 @@ const [calcUnits, setCalcUnits] = useState<"mkg" | "ftlbs">("mkg")
 
 const weightInputRef = useRef<HTMLIonInputElement>(null);
 const heightInputRef = useRef<HTMLIonInputElement>(null);
+const inchesInputRef = useRef<HTMLIonInputElement>(null);
 
 const calculateBMI = () => {
   const enteredWeight = weightInputRef.current!.value;
   const enteredHeight = heightInputRef.current!.value;
+  const enteredInches = inchesInputRef.current?.value;
 
   if (!enteredHeight || !enteredWeight || +enteredHeight <= 0 || +enteredWeight <= 0) {
     setError("Please enter a valid number!")
     return;
   }
 
-  const weightConversionFactor = calcUnits === "ftlbs" ? 2.2 : 1;
-  const heightConversionFactor = calcUnits === "ftlbs" ? 3.38 : 1;
+  if (calcUnits === "ftlbs" && (!enteredInches || +enteredInches < 0)) {
+    return;
+  }
+
+
+  const weightConversionFactor = calcUnits === "ftlbs" ? 2.205 : 1;
+  const heightConversionFactor = calcUnits === "ftlbs" ? 3.281 : 1;
+  const inchesConversionFactor = calcUnits === "ftlbs" ? 39.37 : 1;
 
   const weight = +enteredWeight / weightConversionFactor;
   const height = +enteredHeight / heightConversionFactor;
+  const inches = Number(enteredInches) / inchesConversionFactor;
 
-  const bmi = weight / (height * height)
+  let bmi = calcUnits === "ftlbs" ? weight / ((height + inches) * (height + inches)) : weight / (height * height)
+
 
   setCalculatedBmi(bmi)
 };
@@ -68,6 +78,7 @@ const calculateBMI = () => {
 const resetInputs = () => {
   weightInputRef.current!.value = "";
   heightInputRef.current!.value = "";
+  inchesInputRef.current!.value = "";
   setCalculatedBmi("");
 }
 
@@ -109,6 +120,20 @@ const selectCalcUnitHandler = (selectedValue: "mkg" | "ftlbs") => {
             </IonItem>
           </IonCol>
         </IonRow>
+        {calcUnits === "ftlbs" &&
+        (<IonRow>
+          <IonCol>
+            <IonItem>
+              <IonLabel position="floating">
+                Your Height (inches)
+              </IonLabel>
+              <IonInput type="number" ref={inchesInputRef}></IonInput>
+            </IonItem>
+          </IonCol>
+        </IonRow>)}
+        {calcUnits === "mkg" && (
+          <IonInput className="ion-hide" type="number" ref={inchesInputRef}></IonInput>
+        )}
         <IonRow>
           <IonCol>
             <IonItem>
