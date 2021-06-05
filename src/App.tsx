@@ -56,7 +56,12 @@ const calculateBMI = () => {
     return;
   }
 
-  if (calcUnits === "ftlbs" && (!enteredInches || +enteredInches < 0)) {
+  if (calcUnits === "ftlbs" && !enteredInches) {
+    enteredInches as any;
+  }
+
+  if (calcUnits === "ftlbs" && Number(enteredInches) < 0) {
+    setError("Please enter a valid number!")
     return;
   }
 
